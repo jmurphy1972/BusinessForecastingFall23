@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Load Library, Load Excel File, and Add Header Row
 ```{r}
 library(readxl)
-Typical_Employee_Survey_Data <- read_excel('Typical_Employee_Survey_Data.xlsx', sheet='Survey', col_names = c( "Age", "Gender","Satisfaction", "Characteristics", "Years","Promoted", "Empowerment", "Budgetary", "Proud", "Turndown", "Relations"))
+Typical_Employee_Survey_Data <- read_excel('Typical_Employee_Survey_Data.xlsx', sheet='Survey', col_names = c("Age", "Gender", "Satisfaction", "Characteristics", "Years", "Promoted", "Empowerment", "Budgetary", "Proud", "Turndown", "Relations"))
 ```
 
 ### Show Header Names
@@ -35,82 +35,90 @@ tail(Typical_Employee_Survey_Data)
 ## 2. Print out the 5-point summary and boxplot (numerical columns) for each column (20 points)
 
 ### Age Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Age)
 fivenum(Typical_Employee_Survey_Data$Age)
+summary(Typical_Employee_Survey_Data$Age)
 boxplot(Typical_Employee_Survey_Data$Age)
 ```
 
 ### Gender Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Gender)
 fivenum(Typical_Employee_Survey_Data$Gender)
+summary(Typical_Employee_Survey_Data$Gender)
 boxplot(Typical_Employee_Survey_Data$Gender)
 ```
 
 ### Satisfaction Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Satisfaction)
 fivenum(Typical_Employee_Survey_Data$Satisfaction)
+summary(Typical_Employee_Survey_Data$Satisfaction)
 boxplot(Typical_Employee_Survey_Data$Satisfaction)
 ```
 
 ### Characteristics Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Characteristics)
 fivenum(Typical_Employee_Survey_Data$Characteristics)
+summary(Typical_Employee_Survey_Data$Characteristics)
 boxplot(Typical_Employee_Survey_Data$Characteristics)
 ```
 
-### Empowerment Column
-#### Show Summary, 5-point Summary, and Boxplot
+### Years Column
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Empowerment)
-fivenum(Typical_Employee_Survey_Data$Empowerment)
-boxplot(Typical_Employee_Survey_Data$Empowerment)
+fivenum(Typical_Employee_Survey_Data$Years)
+summary(Typical_Employee_Survey_Data$Years)
+boxplot(Typical_Employee_Survey_Data$Years)
 ```
 
 ### Promoted Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Promoted)
 fivenum(Typical_Employee_Survey_Data$Promoted)
+summary(Typical_Employee_Survey_Data$Promoted)
 boxplot(Typical_Employee_Survey_Data$Promoted)
 ```
 
-### Budgetary Column
-#### Show Summary, 5-point Summary, and Boxplot
+### Empowerment Column
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Budgetary)
+fivenum(Typical_Employee_Survey_Data$Empowerment)
+summary(Typical_Employee_Survey_Data$Empowerment)
+boxplot(Typical_Employee_Survey_Data$Empowerment)
+```
+
+### Budgetary Column
+#### Show 5-point Summary, Summary, and Boxplot
+```{r}
 fivenum(Typical_Employee_Survey_Data$Budgetary)
+summary(Typical_Employee_Survey_Data$Budgetary)
 boxplot(Typical_Employee_Survey_Data$Budgetary)
 ```
 
 ### Proud Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Proud)
 fivenum(Typical_Employee_Survey_Data$Proud)
+summary(Typical_Employee_Survey_Data$Proud)
 boxplot(Typical_Employee_Survey_Data$Proud)
 ```
 
 ### Turndown Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Turndown)
 fivenum(Typical_Employee_Survey_Data$Turndown)
+summary(Typical_Employee_Survey_Data$Turndown)
 boxplot(Typical_Employee_Survey_Data$Turndown)
 ```
 
 ### Relations Column
-#### Show Summary, 5-point Summary, and Boxplot
+#### Show 5-point Summary, Summary, and Boxplot
 ```{r}
-summary(Typical_Employee_Survey_Data$Relations)
 fivenum(Typical_Employee_Survey_Data$Relations)
+summary(Typical_Employee_Survey_Data$Relations)
 boxplot(Typical_Employee_Survey_Data$Relations)
 ```
 
@@ -134,16 +142,16 @@ Typical_Employee_Survey_Data$Characteristics <- as.factor(Typical_Employee_Surve
 class(Typical_Employee_Survey_Data$Characteristics)
 ```
 
-### Empowerment Column
-```{r}
-Typical_Employee_Survey_Data$Empowerment <- as.factor(Typical_Employee_Survey_Data$Empowerment)
-class(Typical_Employee_Survey_Data$Empowerment)
-```
-
 ### Promoted Column
 ```{r}
 Typical_Employee_Survey_Data$Promoted <- as.factor(Typical_Employee_Survey_Data$Promoted)
 class(Typical_Employee_Survey_Data$Promoted)
+```
+
+### Empowerment Column
+```{r}
+Typical_Employee_Survey_Data$Empowerment <- as.factor(Typical_Employee_Survey_Data$Empowerment)
+class(Typical_Employee_Survey_Data$Empowerment)
 ```
 
 ### Budgetary Column
@@ -179,64 +187,82 @@ head(Typical_Employee_Survey_Data)
 ## 4. Plot the right visual for each column (20 points)
 
 ### Age Histogram
+#### Histogram is the Right Visual!
 ```{r}
 hist(Typical_Employee_Survey_Data$Age, main="Histogram of Age vs People", col="Blue", xlab="Age", ylab="Number of People")
+barplot(Typical_Employee_Survey_Data$Age, main="Bar Plot of Age", col="Red")
 ```
 
 ### Gender Plots
+#### Pie Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Gender, col="Blue", main="Plot of Gender vs People", xlab="Gender (1=male, 2=female)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Gender, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Gender vs Age", xlab="Gender (1=male, 2=female)", ylab="Age")
+pie(table(Typical_Employee_Survey_Data$Gender), main="Pie Chart of Gender", xlab="Gender (1=male, 2=female)", labels = c("male", "female"))
 ```
 
 ### Satisfaction Plots
+#### Pie Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Satisfaction, col="Blue", main="Plot of People vs Satisfaction", xlab="Satisfaction (1=very satisfied, 4=very dissatisfied)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Satisfaction, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Satisfaction", xlab="Satisfaction (1=very satisfied, 4=very dissatisfied)", ylab="Age")
+pie(table(Typical_Employee_Survey_Data$Satisfaction), main="Pie Chart of Satisfaction", xlab="Satisfaction (1=very satisfied, 4=very dissatisfied)", labels = c("very satisfied", "moderately satisfied", "a little dissatisfied", "very dissatisfied"))
 ```
 
 ### Characteristics Plots
+##### Bar Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Characteristics, col="Blue", main="Plot of People vs Characteristics", xlab="Characteristics", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Characteristics, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Characteristics", xlab="Characteristics", ylab="Age")
 ```
 
 ### Years Histogram
+#### Histogram is the Right Visual!
 ```{r}
 hist(Typical_Employee_Survey_Data$Years, main="Histogram of People vs Years", col="Blue", xlab="Years", ylab="Number of People")
+barplot(Typical_Employee_Survey_Data$Years, main="Bar Plot of Years", col="Blue")
 ```
 
 ### Promoted Plots
+##### Bar Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Promoted, col="Blue", main="Plot of People vs Promoted", xlab="Promoted (1=very likely, 5=very unlikely)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Promoted, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Promoted", xlab="Promoted (1=very likely, 5=very unlikely)", ylab="Age")
+pie(table(Typical_Employee_Survey_Data$Promoted), main="Pie Chart of Promoted in 5 Years", xlab="Promoted (1=very likely, 5=very unlikely)", labels = c("very likely", "likely", "unsure", "unlikely", "very unlikely"))
 ```
 
 ### Empowerment Plots
+##### Bar Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Empowerment, col="Blue", main="Plot of People vs Empowerment", xlab="Empowerment (1=always, 4=never)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Empowerment, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Empowerment", xlab="Empowerment (1=always, 4=never)", ylab="Age")
 ```
 
 ### Budgetary Plots
+#### Pie Chart is the Right Visual!
 ```{r}
-plot(Typical_Employee_Survey_Data$Budgetary, col="Blue", main="Plot of People vs Budgetary", xlab="Budgetary (1=yes, 4=no)", ylab="Number of People")
-plot(Typical_Employee_Survey_Data$Budgetary, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Budgetary", xlab="Budgetary (1=yes, 4=no)", ylab="Age")
+plot(Typical_Employee_Survey_Data$Budgetary, col="Blue", main="Plot of People vs Budgetary", xlab="Budgetary (1=yes, 2=no)", ylab="Number of People")
+plot(Typical_Employee_Survey_Data$Budgetary, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Budgetary", xlab="Budgetary (1=yes, 2=no)", ylab="Age")
+pie(table(Typical_Employee_Survey_Data$Budgetary), main="Pie Chart of Budgetary Decisions", xlab="Budget (1=Yes, 2=No)", labels = c("Yes", "No"))
 ```
 
 ### Proud Plots
+#### Pie Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Proud, col="Blue", main="Plot of People vs Proud", xlab="Proud (1=very proud, 4=not at all proud)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Proud, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Proud", xlab="Proud (1=very proud, 4=not at all proud)", ylab="Age")
+pie(table(Typical_Employee_Survey_Data$Proud), main="Pie Chart of Proud", xlab="Proud (1=very proud, 4=not at all proud)", labels = c("very proud", "somewhat proud", "indifferent", "not at all proud"))
 ```
 
 ### Turndown Plots
+##### Bar Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Turndown, col="Blue", main="Plot of People vs Turndown", xlab="Turndown (1=very likely, 5=very unlikely)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Turndown, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Turndown", xlab="Turndown (1=very likely, 5=very unlikely)", ylab="Age")
 ```
 
 ### Relations Plots
+##### Bar Chart is the Right Visual!
 ```{r}
 plot(Typical_Employee_Survey_Data$Relations, col="Blue", main="Plot of People vs Relations", xlab="Relations (1=very good, 5=very bad)", ylab="Number of People")
 plot(Typical_Employee_Survey_Data$Relations, Typical_Employee_Survey_Data$Age, col="Red", main="Plot of Age vs Relations", xlab="Relations (1=very good, 5=very bad)", ylab="Age")
@@ -244,20 +270,39 @@ plot(Typical_Employee_Survey_Data$Relations, Typical_Employee_Survey_Data$Age, c
 
 ## 5. Plot scatter plots to show few relationships (20 points)
 
-### Age vs People Scatter Plot
+### Years vs Age Scatter Plot
 ```{r}
-plot(Typical_Employee_Survey_Data$Age, main="Scatter Plot of Age vs People", col="Blue", xlab="People", ylab="Age")
+plot(Typical_Employee_Survey_Data$Age, Typical_Employee_Survey_Data$Years, main="Scatter Plot of Years vs Age", col="Red", xlab="Age", ylab="Years of Service")
+```
+
+### Gender vs Years Scatter Plot
+```{r}
+plot(Typical_Employee_Survey_Data$Years, Typical_Employee_Survey_Data$Gender, main="Scatter Plot of Gender vs Years", col="Blue", xlab="Years of Service", ylab="Gender (1=male, 2=female)")
 ```
 
 ### Gender vs Age Scatter Plot
 ```{r}
-plot(Typical_Employee_Survey_Data$Age, as.numeric(Typical_Employee_Survey_Data$Gender), main="Scatter Plot of Gender vs Age", col="Blue", xlab="Age", ylab="Gender (1=male, 2=female)")
+plot(Typical_Employee_Survey_Data$Age, Typical_Employee_Survey_Data$Gender, main="Scatter Plot of Gender vs Age", col="Red", xlab="Age", ylab="Gender (1=male, 2=female)")
 ```
 
-### Satisfaction and Gender vs People Scatter Plot
+### Satisfaction vs Age Scatter Plot
 ```{r}
-plot(as.numeric(Typical_Employee_Survey_Data$Satisfaction), main="Scatter Plot of Gender and Satisfaction vs People", col="Red", xlab="People", ylab="Gender (Blue), Satisfaction (Red)")
-points(as.numeric(Typical_Employee_Survey_Data$Gender), col="Blue")
+plot(Typical_Employee_Survey_Data$Age, Typical_Employee_Survey_Data$Satisfaction, main="Scatter Plot of Satisfaction vs Age", col="Blue", xlab="Age", ylab="Satisfaction (1=very satisfied, 4=very dissatisfied)")
+```
+
+### Satisfaction vs Turndown Scatter Plot
+```{r}
+plot(as.numeric(Typical_Employee_Survey_Data$Turndown), as.numeric(Typical_Employee_Survey_Data$Satisfaction), main="Scatter Plot of Satisfaction vs Turndown", col="Brown", xlab="Turndown (1=very likely, 5=very unlikely)", ylab="Satisfaction (1=very satisfied, 4=very dissatisfied)")
+```
+
+### Satisfaction vs Years Scatter Plot
+```{r}
+plot(Typical_Employee_Survey_Data$Years, Typical_Employee_Survey_Data$Satisfaction, main="Scatter Plot of Satisfaction vs Years", col="Blue", xlab="Years", ylab="Satisfaction (1=very satisfied, 4=very dissatisfied)")
+```
+
+### Turndown vs Age Scatter Plot
+```{r}
+plot(Typical_Employee_Survey_Data$Age, Typical_Employee_Survey_Data$Turndown, main="Scatter Plot of Turndown vs Age", col="Red", xlab="Age", ylab="Turndown (1=very likely, 5=very unlikely)")
 ```
 
 ### Satisfaction and Gender vs Age Scatter Plot
@@ -266,24 +311,18 @@ plot(Typical_Employee_Survey_Data$Age, as.numeric(Typical_Employee_Survey_Data$S
 points(Typical_Employee_Survey_Data$Age, as.numeric(Typical_Employee_Survey_Data$Gender), col="Blue")
 ```
 
-### Proud and Gender vs People Scatter Plot
-```{r}
-plot(as.numeric(Typical_Employee_Survey_Data$Proud), main="Scatter Plot of Gender and Proud vs People", col="Red", xlab="People", ylab="Gender (Blue), Proud (Red)")
-points(as.numeric(Typical_Employee_Survey_Data$Gender), col="Blue")
-```
-
-### Proud and Gender vs Age Scatter Plot
+### Gender and Proud vs Age Scatter Plot
 ```{r}
 plot(Typical_Employee_Survey_Data$Age, as.numeric(Typical_Employee_Survey_Data$Proud), main="Scatter Plot of Gender and Proud vs Age", col="Red", xlab="Age", ylab="Gender (Blue), Proud (Red)")
 points(Typical_Employee_Survey_Data$Age, as.numeric(Typical_Employee_Survey_Data$Gender), col="Blue")
 ```
 
-### Years vs Age Scatter Plot
-```{r}
-plot(Typical_Employee_Survey_Data$Age, Typical_Employee_Survey_Data$Years, main="Scatter Plot of Years vs Age", col="Purple", xlab="Age", ylab="Years of Service")
-```
-
 ### Years vs People Scatter Plot
 ```{r}
-plot(Typical_Employee_Survey_Data$Years, main="Scatter Plot of Years vs People", col="Red", xlab="People", ylab="Years of Service")
+plot(Typical_Employee_Survey_Data$Years, main="Scatter Plot of Years vs People", col="Red", xlab="People (rows)", ylab="Years of Service")
+```
+
+### Age vs People Scatter Plot
+```{r}
+plot(Typical_Employee_Survey_Data$Age, main="Scatter Plot of Age vs People", col="Blue", xlab="People (rows)", ylab="Age")
 ```
