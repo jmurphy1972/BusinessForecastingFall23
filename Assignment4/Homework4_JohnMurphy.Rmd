@@ -1,0 +1,335 @@
+---
+title: "Homework4_JohnMurphy"
+author: "John Murphy"
+date: "2023-10-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(readxl)
+Electricity_Data_US <- read_excel('electricity_data_US.xls', sheet='electricity_data_US')
+Electricity_Data_US_ts <- ts(Electricity_Data_US$'US_ALL_SECTORS (thousand megawatts hours)', frequency = 12, start = c(2001,1), names = c("Date", "US_ALL_SECTORS"))
+Electricity_Data_US_ts
+```
+
+## Including Plots
+
+### Load the Necesssary Libraries
+```{r}
+library(fpp)
+library(fpp2)
+library(TTR)
+```
+
+
+### Plot the Time-Series Data
+#### This is a plot of Electrical Energy Consumption in the U.S.
+```{r}
+attributes(Electricity_Data_US_ts)
+plot(Electricity_Data_US_ts)
+
+Acf(Electricity_Data_US_ts)
+```
+
+
+## Take Mean of all available history
+### The Mean Forecast shows the Simple Average Forecast which computes the average of past observations to produce the forecast.  All the data is given an equal weight from which the mean is produced.  It can be seen visually from the plot that is not a good forecast model for the data.
+```{r}
+#take Mean of all available history
+mean_forecast <- meanf(Electricity_Data_US_ts,36)
+plot(mean_forecast)
+```
+
+
+## Take Naive Forecast of all available history
+### The Naive Forecast uses the previous value to produce a forecast.  This is known as a "no-change" forecast since it uses the previous data point as the forecast model.  However, we can see that the confidence intervals are larger for the Naive forecast than for the Mean Forecast (both 80% and 95% confidence intervals).  It can be seen visually from the plot that is not a good forecast model for the data.
+```{r}
+# Naive
+naive_forecast <- naive(Electricity_Data_US_ts,36)
+plot(naive_forecast)
+```
+
+
+# Random Walk
+### The Random Walk Forecast shows a forecast from the previous value that is flat, which is similar to the Naive Forecast.  However, we can see that the confidence intervals are larger for the Random Walk forecast than for the Mean Forecast (both 80% and 95% confidence intervals).  It can be seen visually from the plot that is not a good forecast model for the data.  
+```{r}
+# Random Walk
+rwf_forecast <- rwf(Electricity_Data_US_ts,36, drift=FALSE)
+plot(rwf_forecast)
+```
+
+
+# Random Walk with Drift
+## The Random Walk with Drift Forecast closely resembles the Random Walk Forecast.  The Confidence Interval is the same as the Random Walk Forecast.  It can be seen visually from the plot that is not a good forecast model for the data.
+```{r}
+# Random Walk with Drift
+rwf_forecast_drift <- rwf(Electricity_Data_US_ts,36, drift=TRUE)
+plot(rwf_forecast_drift)
+```
+
+
+# Seasonal Naive
+### The Seasonal Naive Model produces a forecast that continues the same seasonal pattern of the actual data.  Because the time-series data shows is highly seasonal in a regular pattern, the Seasonal Naive Forecast is a good forecast model.
+```{r}
+snaive_forecast <- snaive(Electricity_Data_US_ts,36)
+plot(snaive_forecast)
+```
+
+
+# Moving Averages
+## Moving Average with Order = 3
+### The Moving Average (Order = 3) appears to be a good model for the data.  The data is seasonal and this plot shows the seasonal nature of the time-series data.  Since there are sudden shifts in the data, the smaller order of the moving average is a better fit for the data than larger orders.
+```{r}
+MA3_forecast <- ma(Electricity_Data_US_ts,order=3)
+plot(MA3_forecast)
+```
+
+## Moving Average with Order = 6
+### The Moving Average (Order = 6) smooths out the data more than the Moving Average plot for Order=3.  The plot still shows the seasonal nature of the data, even though the graph is slightly smoother.  The larger the order of the Moving Average Forecast, the greater the smoothing effect in the plot.
+```{r}
+MA6_forecast <- ma(Electricity_Data_US_ts,order=6)
+plot(MA6_forecast)
+```
+
+## Moving Average with Order = 12
+### The Moving Average (Order = 12) shows more smoothing of the data than the previous plot.  The larger the order of the Moving Average, the greater the smoothing effect that will be shown in the plot.  The regularity of the seasonal nature of the data is not as obvious in this plot.
+```{r}
+MA12_forecast <- ma(Electricity_Data_US_ts,order=12)
+plot(MA12_forecast)
+```
+
+## Moving Average with Order = 18
+### The Moving Average (Order = 18) appears to show the seasonal nature of the data better than the Moving Average (Order = 12).
+```{r}
+MA18_forecast <- ma(Electricity_Data_US_ts,order=18)
+plot(MA18_forecast)
+```
+
+## Moving Average with Order = 36
+### The Moving Average (Order = 36) shows the most smoothing out of all the Moving Average plots so far.  This plot demonstrates that the larger the order, the greater the smoothing effect.
+```{r}
+MA36_forecast <- ma(Electricity_Data_US_ts,order=36)
+plot(MA36_forecast)
+```
+
+## Moving Average with Order = 72
+### The Moving Average (72) shows the most smoothing out of all the Moving Average plots.  This plot demonstrates that the larger the order of the Moving Average, the greater the smoothing effect of the graph.
+```{r}
+MA72_forecast <- ma(Electricity_Data_US_ts,order=72)
+plot(MA72_forecast)
+```
+
+# Plot the Time-Series and Different Model Forecasts in a Single Chart
+#### The Moving Average Forecasts are shown in the graph with the time-series data.  Generally, the larger the order of the Moving Average, the greater the smoothing effect.  The Moving Averages with a smaller order show a greater amplitude and a better fit of the data than the Moving Averages with a larger order.
+#### The Mean Forecast shows a forecast  that is calculated from the mean of all the data points .  All the data points are given an equal weight when calculating the Mean Forecast.  That is why this looks like a straight line forecast.
+#### The Naive and Random Walk Forecasts are calculated from the value of the last data point.
+```{r}
+plot(mean_forecast)
+lines(naive_forecast$mean,col="red")
+lines(rwf_forecast$mean,col="green")
+lines(rwf_forecast_drift$mean,col="violet")
+lines(snaive_forecast$mean,col="blue")
+lines(MA6_forecast,col="darkred")
+lines(MA12_forecast,col="cyan")
+lines(MA18_forecast,col="purple")
+lines(MA36_forecast,col="orange")
+lines(MA72_forecast,col="darkgreen")
+
+# what other attributes are there?
+attributes(naive_forecast)
+attributes(snaive_forecast)
+```
+
+
+# Decomposition
+```{r}
+ets_forecast <- ets(Electricity_Data_US_ts)
+plot(ets_forecast)
+attributes(ets_forecast)
+ets_forecast$mse
+```
+
+
+# Holt-Winters Forecast Model
+### Holt-Winters Forecast #1 - With No Filters
+```{r}
+HW_forecast <- HoltWinters(Electricity_Data_US_ts)
+HoltWinters(Electricity_Data_US_ts)
+attributes(HW_forecast)
+summary(HW_forecast)
+```
+
+#### The Holt-Winters plot shows a good fit with the actual data in terms of the trend and the seasonality.  This shows that the Holt-Winters plot is a good forecast model for this time-series data.  Based on the comparison between the actual and forecast data (red and black lines), the error is minimal for this forecast model.
+```{r}
+plot(HW_forecast)
+```
+
+
+### Holt-Winters Forecast #2 - Beta is TRUE and Gamma is TRUE
+#### This filter has no exponential smoothing and a seasonal model is fitted to the data.
+```{r}
+SSE_Simple <- HoltWinters(Electricity_Data_US_ts, beta=TRUE, gamma=TRUE)
+attributes(SSE_Simple)
+SSE_Simple$SSE
+```
+
+#### The Holt-Winters plot shows a good fit with the actual data in terms of the seasonality.  However, this forecast model shows more errors between the actual and forecast data (red and black lines) than the previous Holt-Winters plot without the filters.  The previous Holt-Winters plot was a better fit of the data.
+```{r}
+plot(SSE_Simple)
+```
+
+
+### Holt-Winters Forecast #3 - Beta is FALSE and Gamma is TRUE
+#### This filter has exponential smoothing and a seasonal model is fitted to the data.
+```{r}
+SSE_Simple_2 <- HoltWinters(Electricity_Data_US_ts, beta=FALSE, gamma=TRUE)
+attributes(SSE_Simple_2)
+SSE_Simple_2$SSE
+```
+
+#### The Holt-Winters plot shows a better fit with the actual data than the previous model.  When the exponential smoothing is applied to the data, the forecast model provides a better fit.  However, the Holt-Winters plot without filters still shows a better fit than either of the filtered Holt-Winters plot.
+```{r}
+plot(SSE_Simple_2)
+```
+
+
+### Holt-Winters Forecast #4 - Beta is TRUE and Gamma is FALSE.
+#### This filter has no exponential smoothing and a non-seasonal model is fitted to the data.
+```{r}
+SSE_Simple_3 <- HoltWinters(Electricity_Data_US_ts, beta=TRUE, gamma=FALSE)
+attributes(SSE_Simple_3)
+SSE_Simple_3$SSE
+```
+
+#### The Holt-Winters plot shows a worse fit with the actual data than any of the previous Holt-Winters model. The main difference is that the Holt-Winters filter assumes a non-seasonal model.  Since this time-series data shows a highly seasonal pattern, it is no surprise that there are significant differences between the actual data and the forecast data (black and red lines) from this model.
+```{r}
+plot(SSE_Simple_3)
+```
+
+
+# Pick an Accuracy Measure, Compare Your Models, and State the Best Model Based on the Accuracy Comparison
+
+## Summary
+
+### The best model is Holt-Winters (no filters).
+
+### The MAPE (Mean Absolute Scaled Error) is selected as the accuracy measure selected to compare the different forecast models.  The Holt-Winters Forecast (no filters) is the best model based on this accuracy comparison.  It has a MAPE of 2.331722 which is the lowest out of all the forecasts.
+
+### The Holt-Winters Forecast also has the lowest RMSE (Root Mean Squared Error) and MAE (Mean Absolute Error) when compared with the other forecasts. Given the seasonal nature of the time-series data, it is not surprising that Holt-Winters is the best model in this accuracy comparison.
+
+### The second-best model is the Holt-Winters Forecast with Filters (beta=FALSE, gamma=TRUE).  It has the second-lowest MAPE (Mean Absolute Scaled Error), RMSE (Root Mean Squared Error), and MAE (Mean Absolute Error) when compared with the other forecasts.
+
+### The third-best model is the Seasonal Naive Forecast.  It has the third-lowest MAPE (Mean Absolute Scaled Error), RMSE (Root Mean Squared Error), and MAE (Mean Absolute Error) when compared with the other forecasts.
+
+## Moving Average Accuracies
+
+#### Moving Average (Order = 3)
+```{r}
+accuracy(MA3_forecast, Electricity_Data_US_ts, h=12)
+```
+
+#### Moving Average (Order = 6)
+```{r}
+accuracy(MA6_forecast, Electricity_Data_US_ts, h=12)
+```
+
+#### Moving Average (Order = 12)
+```{r}
+accuracy(MA12_forecast, Electricity_Data_US_ts, h=12)
+```
+
+#### Moving Average (Order = 18)
+```{r}
+accuracy(MA18_forecast, Electricity_Data_US_ts, h=12)
+```
+
+#### Moving Average (Order = 36)
+```{r}
+accuracy(MA36_forecast, Electricity_Data_US_ts, h=12)
+```
+
+#### Moving Average (Order = 72)
+```{r}
+accuracy(MA72_forecast, Electricity_Data_US_ts, h=12)
+```
+
+
+## Forecast Accuracies
+
+#### Mean Forecast
+```{r}
+accuracy(mean_forecast)
+```
+
+#### Naive Forecast
+```{r}
+accuracy(naive_forecast)
+```
+
+#### Random-Walk Forecast
+```{r}
+accuracy(rwf_forecast)
+```
+
+#### Random-Walk Forecast with Drift
+```{r}
+accuracy(rwf_forecast_drift)
+```
+
+#### Seasonal Naive Forecast
+```{r}
+accuracy(snaive_forecast)
+```
+
+
+## Holt-Winters Accuracies
+
+#### Holt-Winters Forecast
+```{r}
+forecast_ets_hw <- forecast(HW_forecast, h=12)
+accuracy(forecast_ets_hw)
+```
+
+#### Holt-Winters Forecast (SSE_Simple 1) (beta=TRUE, gamma=TRUE)
+```{r}
+forecast_ets_sse_simple_hw <- forecast(SSE_Simple, h=12)
+accuracy(forecast_ets_sse_simple_hw)
+```
+
+#### Holt-Winters Forecast (SSE_Simple 2) (beta=FALSE, gamma=TRUE)
+```{r}
+forecast_ets_sse_simple_2_hw <- forecast(SSE_Simple_2, h=12)
+accuracy(forecast_ets_sse_simple_2_hw)
+```
+
+#### Holt-Winters Forecast (SSE_Simple 3) (beta=TRUE, gamma=FALSE)
+```{r}
+forecast_ets_sse_simple_3_hw <- forecast(SSE_Simple_3, h=12)
+accuracy(forecast_ets_sse_simple_3_hw)
+```
+
+
+# Setup Training Set and Test Set
+```{r}
+training_set = window(Electricity_Data_US_ts, start = c(2001,1), end=c(2018,2))
+test_set = window(Electricity_Data_US_ts, start = c(2018,3), end=c(2022,3))
+
+forecast_ets_hw <- forecast(HoltWinters(training_set), h=48)
+accuracy(forecast_ets_hw, test_set, h=48)
+
+accuracy(naive(training_set,h=48), test_set)
+accuracy(rwf(training_set,h=48), test_set)
+accuracy(snaive(training_set,h=48), test_set)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
