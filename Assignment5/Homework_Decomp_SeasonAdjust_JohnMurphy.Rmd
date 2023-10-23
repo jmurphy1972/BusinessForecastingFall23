@@ -1,0 +1,132 @@
+---
+title: "Homework_Decomp_SeasonAdjust_JohnMurphy"
+author: "John Murphy"
+date: "2023-10-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Load the Library and Read the Excel File (converted from .csv format)
+### Create the time-series data frame by selecting the US_ALL_SECTORS column
+```{r}
+library(readxl)
+Electricity_Data_US <- read_excel('electricity_data_US.xls', sheet='electricity_data_US')
+Electricity_Data_US_ts <- ts(Electricity_Data_US$'US_ALL_SECTORS (thousand megawatts hours)', frequency = 12, start = c(2001,1), names = c("Date", "US_ALL_SECTORS"))
+Electricity_Data_US_ts
+```
+
+### Load the Necessary Libraries
+```{r}
+library(fpp)
+library(fpp2)
+library(TTR)
+```
+
+## Plot the Time-Series Data
+```{r}
+head(Electricity_Data_US_ts)
+plot(Electricity_Data_US_ts)
+```
+
+### Plot the Acf of the Time-Series Data
+##### The Time-Series Data has significant values and shows Seasonality at Lag=12 and Lag=24
+```{r}
+Acf(Electricity_Data_US_ts)
+```
+
+## Compute Seasonal Decomposition of Time-Series by Loess
+```{r}
+stl_decomp <- stl(Electricity_Data_US_ts, s.window = "periodic")
+
+attributes(stl_decomp)
+stl_decomp$call
+stl_decomp$win
+stl_decomp$inner
+stl_decomp$outer
+```
+
+### Plot the Seasonal Decomposition of Time Series by Loess Graph
+```{r}
+plot(stl_decomp)
+```
+
+## Compute Seasonal Adjustment of Seasonal Decomposition of Time-Series by Loess
+### Plot the Seasonal Adjustment of Seasonal Decomposition Graph
+```{r}
+tmp <- seasadj(stl_decomp)
+plot(tmp)
+```
+
+### Plot the Graph and Include Original Time-Series Data on Plot
+```{r}
+plot(Electricity_Data_US_ts)
+lines(tmp, col = "Purple")
+```
+
+## Plot the Forecast of Seasonal Decomposition by Loess
+```{r}
+f_stl <- forecast(stl_decomp, h=12)
+plot(f_stl)
+lines(f_stl$fitted, col="Red")
+```
+
+### Accuracy of Forecast of Seasonal Decomposition of Time-Series by Loess
+```{r}
+accuracy(f_stl)
+```
+
+### Plot the Acf of the Forecast of Decomposition
+#### The Acf is mostly insignificant except for Lag = 24
+```{r}
+Acf(f_stl$residuals)
+```
+
+## Plot the Classical Decomposition by Moving Averages of Electricity Data
+```{r}
+decomp_elec <- decompose(Electricity_Data_US_ts)
+plot(decomp_elec)
+attributes(decomp_elec)
+```
+
+## Plot the Classical Decomposition by Moving Averages  of Electricity Data by Multiplicative Seasonal Component
+#### The scales of seasonal and random have changed under the Multiplicative seasonal component.
+```{r}
+decomp_elec <- decompose(Electricity_Data_US_ts, type="multiplicative")
+plot(decomp_elec)
+attributes(decomp_elec)
+```
+
+### Plot the Forecast of Classical Decomposition by Moving Averages 
+```{r}
+#f_decomp_elec <- forecast(decomp_elec, h=12)
+#plot(f_decomp_elec)
+#accuracy(f_decomp_elec)
+```
+
+## Plot the Forecast of Seasonal Adjustment of Classical Decomposition by Moving Averages 
+```{r}
+f_seas <- forecast(seasadj(decomp_elec), h=12)
+plot(f_seas)
+```
+
+### Accuracy of Forecast of Seasonal Adjustment of Classical Decomposition by Moving Averages
+#### The Accuracy of this Forecast is better than Accuracy of Seasonal Adjustment of Seasonal Decomposition 
+#### of Time Series by Loess on Measures of RMSE, MAE, MPE, MAPE, and MASE
+```{r}
+accuracy(f_seas)
+```
+
+### Plot the Acf of the Forecast of Classical Decomposition by Moving Averages
+#### The Acf is mostly insignificant except for Lag = 24
+```{r}
+Acf(f_seas$residuals)
+```
