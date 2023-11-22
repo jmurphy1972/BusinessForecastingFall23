@@ -1,0 +1,221 @@
+---
+title: "Homework6"
+author: "John Murphy"
+date: "2023-11-19"
+output: html_document
+---
+
+```{r}
+library(readr)
+#names=c("Date", "US_ALL_SECTORS", "US_ELECTRIC_UTILITY", "US_INDEPENDENT_POWER_PRODUCERS", "US_ALL_COMMERCIAL", "US_ALL_INDUSTRIAL")
+Electricity_Data_US <- read_csv('electricity_data_US.csv')
+Electricity_Data_US_ts <- ts(Electricity_Data_US$'US_ALL_SECTORS', frequency = 12, start = c(2001,1), names = c("Date", "US_ALL_SECTORS"))
+Electricity_Data_US_ts
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+### Load the Necessary Libraries
+```{r}
+library(fpp)
+library(fpp2)
+library(TTR)
+```
+
+## Plot the Time-Series Data
+```{r}
+head(Electricity_Data_US_ts)
+plot(Electricity_Data_US_ts)
+```
+
+### Acf on Time-Series Data
+```{r}
+Acf(Electricity_Data_US_ts)
+```
+
+## ADF test says differences is required if p-value is > 0.05
+### According to ADF, p-value = 0.01 which means no difference required
+```{r}
+adf.test(Electricity_Data_US_ts)
+```
+
+## Kipps test says differences is required if p-value is < 0.05
+### According to Kipps, p-value = 0.02679 which means differences are required
+```{r}
+kpss.test(Electricity_Data_US_ts)
+```
+
+### NSDIFFS only works for seasonal data - our data is seasonal - USE THIS
+### NSDIFFS = 1
+```{r}
+nsdiffs(Electricity_Data_US_ts)
+```
+
+### NDIFFS works with non-seasonal data - our data is seasonal - DO NOT USE
+### NDIFFS = 0
+```{r}
+ndiffs(Electricity_Data_US_ts)
+```
+
+### Plots ACF, PACF and Timeseries plot together
+```{r}
+tsdisplay(Electricity_Data_US_ts)
+```
+
+### Use First Order Differences as indicated by NDIFFS function
+```{r}
+Electricity_Data_US_ts_diff1 <- diff(Electricity_Data_US_ts, differences=1)
+```
+
+### Plot the Time-Series Data
+```{r}
+head(Electricity_Data_US_ts_diff1)
+plot(Electricity_Data_US_ts_diff1)
+```
+
+### Acf on First-Order Time-Series Data
+##### There are significant Lags at Lag=12 and Lag=24 which shows seasonal pattern
+```{r}
+Acf(Electricity_Data_US_ts_diff1)
+```
+
+### See if more differences are needed
+### Difference Plot appears stationary at Diff=1
+```{r}
+tsdisplay(Electricity_Data_US_ts_diff1)
+ndiffs(Electricity_Data_US_ts_diff1)
+kpss.test(Electricity_Data_US_ts_diff1)
+adf.test(Electricity_Data_US_ts_diff1)
+```
+
+
+### Plot Correlogram of First Order Difference
+```{r}
+Acf(Electricity_Data_US_ts_diff1, lag.max=24)
+```
+
+### Get Autocorrelation values
+```{r}
+Acf(Electricity_Data_US_ts_diff1, lag.max=24, plot=FALSE)
+```
+
+### Plot Partial Correlogram of First Order Difference
+#### The Partial Acf graph indicates significant Lags at lower value Lags (Lags <= 12)
+```{r}
+Pacf(Electricity_Data_US_ts_diff1, lag.max=24)
+```
+
+### Get Partial Autocorrelation Values
+#### The Partial Acf graph indicates significant Lags at lower value Lags (Lags <= 12)
+```{r}
+Pacf(Electricity_Data_US_ts_diff1, lag.max=24, plot=FALSE)
+```
+
+#### Principle of Parsimony says choose one with the least number of parameters
+#### Use auto.arima to find the best ARIMA values
+```{r}
+auto_fit <- auto.arima(Electricity_Data_US_ts, approximation=FALSE, stepwise=FALSE, trace=TRUE)
+```
+
+####  Best model: ARIMA(1,0,1)(2,1,1)[12] with drift
+
+### There are lot of attributes. ?auto.arima will tell you about them
+```{r}
+attributes(auto_fit)
+```
+
+
+# ARIMA METHODS
+
+### ARIMA (1,0,1)
+#### sigma^2 = 678473313:  log likelihood = -2953.41
+#### AIC=5914.82   AICc=5914.98   BIC=5928.99
+```{r}
+fit_Arima_1 <- Arima(Electricity_Data_US_ts, order=c(1,0,1))
+fit_Arima_1
+```
+
+### ARIMA (2,1,1)
+#### sigma^2 = 571090405:  log likelihood = -2921.27
+#### AIC=5850.54   AICc=5850.71   BIC=5864.69
+#### ARIMA (2,1,1) has lower sigma^2, AIC, AICc, BIC values than ARIMA (1,0,1)
+```{r}
+fit_Arima_2 <- Arima(Electricity_Data_US_ts, order=c(2,1,1))
+fit_Arima_2
+```
+
+
+# ARIMA Residual Analysis
+
+### ARIMA (1,0,1)
+### Residual analysis - ACF plot, Box Ljung test, Histogram and Timeseries plot
+#### The Histogram is not a normal curve - this should not be considered
+#### The residuals show significant Lags, especially at 12 and 24, which means the ARIMA model is incomplete.
+```{r}
+Acf(fit_Arima_1$residuals)
+Box.test(residuals(fit_Arima_1), lag=20, type="Ljung")
+plot.ts(residuals(fit_Arima_1))
+hist(fit_Arima_1$residuals)
+tsdiag(fit_Arima_1)
+```
+
+
+### ARIMA (2,1,1)
+### Residual analysis - ACF plot, Box Ljung test, Histogram and Timeseries plot
+#### The Histogram is approximately a normal curve
+#### The residuals show significant Lags, especially at 12 and 24, which means the ARIMA model is incomplete.
+```{r}
+Acf(fit_Arima_2$residuals)
+Box.test(residuals(fit_Arima_2), lag=20, type="Ljung")
+plot.ts(residuals(fit_Arima_2))
+hist(fit_Arima_2$residuals)
+tsdiag(fit_Arima_2)
+```
+
+
+# ARIMA Forecasts
+
+#### Forecast with ARIMA (1,0,1) with CI = 99.5% and default
+#### Plot the Forecast of ARIMA FIT where h=5
+```{r}
+forecast(fit_Arima_1, h=5, level=c(99.5))
+forecast(fit_Arima_1, h=5)
+plot(forecast(fit_Arima_1, h=5))
+```
+
+#### Forecast with ARIMA (2,1,1) with CI = 99.5% and default
+#### Plot the Forecast of ARIMA FIT where h=5
+```{r}
+forecast(fit_Arima_2, h=5, level=c(99.5))
+forecast(fit_Arima_2, h=5)
+plot(forecast(fit_Arima_2, h=5))
+```
+
+
+# Accuracies
+
+## ARIMA(1,0,1)
+#####                     ME     RMSE      MAE        MPE     MAPE     MASE
+##### Training set -33.17679 25893.85 21766.01 -0.5844421 6.486328 2.113892
+
+```{r}
+accuracy(fit_Arima_1)
+```
+
+## ARIMA (2,1,1)
+#####                    ME     RMSE      MAE       MPE     MAPE     MASE       ACF1
+##### Training set 2336.421 23709.33 19373.83 0.2428932 5.787461 1.881567 -0.1449457
+```{r}
+accuracy(fit_Arima_2)
+```
+
+## Accuracy Conclusion
+#### ARIMA (2,1,1) has better accuracy than ARIMA (1,0,1)
+#### when considering these metrics: RMSE, MAE, MPE, MAPE, MASE
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
